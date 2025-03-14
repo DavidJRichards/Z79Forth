@@ -1,15 +1,17 @@
 * Begin tunable parameters section.
 
 CSSNTVE	equ	0		Words and HEX numbers are case sensitive if NZ
-SSDFEAT	equ	1		Set to 1 to enable the symbolic stack dump feat.
+SSDFEAT	equ	0		Set to 1 to enable the symbolic stack dump feat.
 RELFEAT	set	1		Set to 1 to enable the reliability feature
 
+WTCFEAT	equ	1		MECB SYS I/O RTC
 RTCFEAT	equ	0		Cool but the reliability feature must go...
 DEBUG	set	0		Enforce assertions and miscellaneous checks
 HVNMI	equ	1		NMI handler support
 HVNMI2	equ	0		NMI handler support (async input debugging)
 * Loop count for MS. This is busy waiting, so we depend on the CPU clock speed.
-MSLCNT	equ	794		at 4 MHz native mode
+MSLCNT	equ	194		at 1 MHz native mode (MECB)
+*MSLCNT	equ	794		at 4 MHz native mode
 *MSLCNT	equ	994		at 5 MHz native mode
 
 * End tunable parameters section.
@@ -43,13 +45,13 @@ VECTBL	equ	$FFF0
 VARSPC	equ	$100
 
 * The 74HCT138 (U7) IO address decoder maps one 1 KB area per usable device.
-DEV0	equ	$C000		Compact Flash memory module (optional)
+DEV0	equ	$C0C0		Compact Flash memory module (optional)
 DEV1	equ	$C400
 DEV2	equ	$C800
 DEV3	equ	$CC00
-DEV4	equ	$D000
+DEV4	equ	$C040       RTC-72421 (optional MECB)
 DEV5	equ	$D400		MC146818 RTC (optional)
-DEV6	equ	$D800		HD63B50 unit 0
+DEV6	equ	$C008		HD63B50 unit 0
 DEV7	equ	$DC00
 
 ACIACTL	equ	DEV6
@@ -120,6 +122,28 @@ BOFLAGS	equ	BLKSIZ+1	Base buffer to the 'flag' field offset
 BOBLKNO	equ	BLKSIZ+2	Base buffer to the 'blknum' field offset
 
 BFDISP	equ	BUF1-BUF0	Offset between resident buffers
+
+;;;
+;;; RTC-72421 registers
+;;; 
+rtc_base	equ	DEV4
+rtc_reg_s1	equ	rtc_base+$0	; 1-second digit
+rtc_reg_s10	equ	rtc_base+$1	; 10-seconds digit
+rtc_reg_mi1	equ	rtc_base+$2	; 1-minute digit
+rtc_reg_mi10	equ	rtc_base+$3	; 10-minutes digit
+rtc_reg_h1	equ	rtc_base+$4	; 1-hour digit
+rtc_reg_h10	equ	rtc_base+$5	; 10-hours digit
+rtc_reg_d1	equ	rtc_base+$6	; 1-day digit
+rtc_reg_d10	equ	rtc_base+$7	; 10-days digit
+rtc_reg_mo1	equ	rtc_base+$8	; 1-month digit
+rtc_reg_mo10	equ	rtc_base+$9	; 10-months digit
+rtc_reg_y1	equ	rtc_base+$a	; 1-year digit
+rtc_reg_y10	equ	rtc_base+$b	; 10-years digit
+rtc_reg_w	equ	rtc_base+$c	; Day of week
+rtc_reg_cd	equ	rtc_base+$d	; Control reg D
+rtc_reg_ce	equ	rtc_base+$e	; Control reg E
+rtc_reg_cf	equ	rtc_base+$f	; Control reg F
+
 
 * MC146818 RTC registers.
 RTAS	equ	DEV5		Latch target register address offset

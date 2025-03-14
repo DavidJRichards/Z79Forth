@@ -241,6 +241,20 @@ SRCID	rmb	1		ANSI SOURCE-ID (internal only)
 CYCLO	rmb	1		McCabe cyclomatic complexity counter
 SQUOTFN	rmb	1		NZ only if running WORD from S" (or .")
 
+    IFNE WTCFEAT
+; realtime watch data
+ram_time
+rt_c    rmb	1 ;     $20     0 century
+rt_y    rmb	1 ;     $24     1 year
+rt_o    rmb	1 ;     $10     2 month
+rt_d    rmb	1 ;     $03     3 date
+rt_h    rmb	1 ;     $17     4 hour
+rt_m    rmb	1 ;     $55     5 minute
+rt_s    rmb	1 ;     0       6 second
+;rt_cs   rmb	1 ;     0       7 checksum (unused)
+    ENDC WTCFEAT
+
+
 * Serial buffer parameters. Queing happens on FIRQ.
 * Dequeing occurs when GETCH is invoked.
 SERBENQ	rmb	1		Enqueue offset
@@ -1511,6 +1525,9 @@ BKIN2PT	pshs	y
 	bra	@rsolvd
 
 	include	rtc.asm		Experimental MC146818 support
+    IFNE WTCFEAT	
+	include	watch.asm	Experimental RTC-72421 support
+    ENDC WTCFEAT	
 	include	storage.asm	CompactFlash support
 
 * Check for minimal data stack depth. On input D has the lowest possible stack
@@ -1826,9 +1843,32 @@ RTCSTOR	fcb	4		Non-standard
 	RFXT	jmp,TWODROP+8	XT for 2 DROP
 	ENDC			RTCFEAT
 
+    IFNE WTCFEAT
+;-------------------------------------------------------------------------------
+; MECB RTC
+
+WTCFTCH	fcb	4		Non-standard
+	fcc	'WTC@'		( regoff -- byteval )
+	fdb	RTCSTOR
+	RFCS
+	jmp	WTREGRD
+
+WTCSTOR	fcb	4		Non-standard
+	fcc	'WTC!'		( byteval regoff -- )
+	fdb	WTCFTCH
+	RFCS
+	jmp	WTREGWR
+
+;-------------------------------------------------------------------------------
+    ENDC WTCFEAT
+
 LIST	fcb	4		ANSI (Block ext)
 	fcc	'LIST'		( ublkno -- )
+    IFNE WTCFEAT
+	fdb	WTCSTOR
+	ELSE
 	fdb	RTCSTOR
+    ENDC WTCFEAT
 	RFCS
 	tst	CFCARDP
 	bne	@cont
