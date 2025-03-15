@@ -1,7 +1,7 @@
 * Begin tunable parameters section.
 
 CSSNTVE	equ	0		Words and HEX numbers are case sensitive if NZ
-SSDFEAT	equ	0		Set to 1 to enable the symbolic stack dump feat.
+SSDFEAT	equ	1		Set to 1 to enable the symbolic stack dump feat.
 RELFEAT	set	1		Set to 1 to enable the reliability feature
 
 WTCFEAT	equ	1		MECB SYS I/O RTC
@@ -38,7 +38,7 @@ CSPOP	EQU	NPOP
 RAMSTRT	equ	$0000
 RAMSIZE	equ	$8000
 IOSTRT	equ	$C000
-ROMSTRT	equ	$E000
+ROMSTRT	equ	$D000
 VECTBL	equ	$FFF0
 
 * Base address for global variables (direct page addressed).

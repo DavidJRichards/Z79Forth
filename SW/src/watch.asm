@@ -2,11 +2,11 @@
 
 rom_time
 rot_c    fcb     $20     0 century
-rot_y    fcb     $24     1 year
-rot_o    fcb     $10     2 month
-rot_d    fcb     $03     3 date
+rot_y    fcb     $25     1 year
+rot_o    fcb     $03     2 month
+rot_d    fcb     $15     3 date
 rot_h    fcb     $17     4 hour
-rot_m    fcb     $55     5 minute
+rot_m    fcb     $20     5 minute
 rot_s    fcb     0       6 second
 rot_cs   fcb     0       7
 
